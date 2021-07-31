@@ -1,0 +1,2 @@
+--customize-hook=cd "$1"; for t in d f l; do find -xdev . -type $t -exec stat -c '%N' {} + | LC_ALL=C sort > boot/list-${t}.txt; done
+--customize-hook=cd "$1"; find -xdev . -type f -size +0b -exec b2sum -l 128 {} + | LC_ALL=C sort -k 2 > boot/files.b2sum

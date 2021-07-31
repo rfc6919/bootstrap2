@@ -9,7 +9,9 @@ IFS=$'\n\t'
 
 mmdebstrap_args=(--mode=unshare)
 
-for component in "$@"
+components=(components/0?-* "$@" components/9?-*)
+
+for component in "${components[@]}"
 do
     [[ -d "${component}" ]] || {
         echo "EE: component ${component} is not a directory"
@@ -25,8 +27,13 @@ mmdebstrap_args+=(bullseye -)
 export bootstrap2_target_dir="out-$(date +%Y%m%d-%H%M%S)"
 mkdir "$bootstrap2_target_dir"
 
-echo "II: running mmdebstrap with args:" | tee "${bootstrap2_target_dir}/run.txt"
-printf "II: %s\n" "${mmdebstrap_args[@]}" | tee -a "${bootstrap2_target_dir}/run.txt"
+{
+    echo   "II: running mmdebstrap"
+    echo   "II: with components:"
+    printf "II:   %s\n" "${components[@]}"
+    echo   "II: and args:"
+    printf "II:   %s\n" "${mmdebstrap_args[@]}"
+} | tee "${bootstrap2_target_dir}/run.txt"
 
 mmdebstrap "${mmdebstrap_args[@]}" \
 | tar2sqfs --compressor zstd --comp-extra level=1 --block-size 1M "${bootstrap2_target_dir}/filesystem.squashfs"
