@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+[[ $# -gt 0 ]] || {
+    echo "usage: [bootstrap2_hostname=<hostname>] $0 components/<component> [...]" 
+    exit 1
+}
+
+mmdebstrap_args=(--mode=unshare)
+
+for component in "$@"
+do
+    [[ -d "${component}" ]] || {
+        echo "EE: component ${component} is not a directory"
+        exit 1
+    }
+    [[ -f "${component}/args" ]] && mapfile -t -O ${#mmdebstrap_args[@]} mmdebstrap_args < "${component}/args"
+    [[ -d "${component}/hooks" ]] && mmdebstrap_args+=(--hook-directory="${component}/hooks")
+done
+
+mmdebstrap_args+=(bullseye -)
+
+# needs to be in the environment for copy-out of /boot
+export bootstrap2_target_dir="out-$(date +%Y%m%d-%H%M%S)"
+mkdir "$bootstrap2_target_dir"
+
+echo "II: running mmdebstrap with args:" | tee "${bootstrap2_target_dir}/run.txt"
+printf "II: %s\n" "${mmdebstrap_args[@]}" | tee -a "${bootstrap2_target_dir}/run.txt"
+
+mmdebstrap "${mmdebstrap_args[@]}" \
+| tar2sqfs --compressor zstd --comp-extra level=1 --block-size 1M "${bootstrap2_target_dir}/filesystem.squashfs"

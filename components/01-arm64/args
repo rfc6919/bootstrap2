@@ -1,0 +1,4 @@
+--architectures=arm64
+--include=linux-image-arm64
+--setup-hook=echo ttyAMA0 > $1/etc/securetty
+--customize-hook=systemctl --root="$1" enable serial-getty@ttyAMA0

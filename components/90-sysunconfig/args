@@ -1,0 +1,2 @@
+--customize-hook=rm -rf "$1"/run/*
+--customize-hook=rm "$1"/etc/resolv.conf

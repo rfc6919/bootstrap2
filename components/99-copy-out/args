@@ -1,0 +1,4 @@
+--customize-hook=cd "$1"; dpkg-query --show --admindir=var/lib/dpkg > boot/list-dpkg.txt
+--customize-hook=cd "$1"; for t in d f l; do find . -type $t -exec stat -c '%N' {} + | LC_ALL=C sort > boot/list-${t}.txt; done
+--customize-hook=cd "$1"; find . -type f -size +0b -exec b2sum -l 128 {} + | LC_ALL=C sort -k 2 > boot/files.b2sum
+--customize-hook=copy-out /boot "${bootstrap2_target_dir}/"

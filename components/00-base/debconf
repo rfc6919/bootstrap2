@@ -1,0 +1,7 @@
+## XXX I just do *NOT* understand how to make these work?!?!
+## bfd I guess, we want UTF-8 anyway. still frustrating tho.
+#console-setup console-setup/charmap47 select UTF-8
+#console-setup console-setup/charmap47 select ISO-8859-15
+
+tzdata tzdata/Areas select Australia
+tzdata tzdata/Zones/Australia select Melbourne

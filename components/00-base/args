@@ -1,0 +1,7 @@
+--variant=important
+--dpkgopt=components/00-base/dpkg-dpkg.cfg.d-50localepurge
+--setup-hook=/usr/share/mmdebstrap/hooks/setup00-merged-usr.sh
+--setup-hook=ln -s /proc/self/mounts $1/etc/mtab
+--setup-hook=echo "${bootstrap2_hostname:-debian}" > "$1"/etc/hostname
+--extract-hook=echo 'LANG="C"' > $1/etc/default/locale
+--extract-hook=chroot "$1" debconf-set-selections < components/00-base/debconf
