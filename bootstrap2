@@ -24,9 +24,11 @@ do
     do
         mmdebstrap_args+=(--include="$(perl -pe 'y/ /=/; y/\n/ /' $packages)")
     done
+    [[ -f "${component}/mirror" ]] && mirror="$(cat "${component}/mirror")"
 done
 
 mmdebstrap_args+=(bullseye -)
+[[ "${mirror:-}" ]] && mmdebstrap_args+=("$mirror")
 
 # needs to be in the environment for copy-out of /boot
 export bootstrap2_target_dir="out-$(date +%Y%m%d-%H%M%S)"
