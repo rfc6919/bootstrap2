@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+shopt -s nullglob
 IFS=$'\n\t'
 
 [[ $# -gt 0 ]] || {
@@ -19,6 +20,10 @@ do
     }
     [[ -f "${component}/args" ]] && mapfile -t -O ${#mmdebstrap_args[@]} mmdebstrap_args < "${component}/args"
     [[ -d "${component}/hooks" ]] && mmdebstrap_args+=(--hook-directory="${component}/hooks")
+    for packages in "${component}"/*.packages
+    do
+        mmdebstrap_args+=(--include="$(perl -pe 'y/ /=/; y/\n/ /' $packages)")
+    done
 done
 
 mmdebstrap_args+=(bullseye -)
