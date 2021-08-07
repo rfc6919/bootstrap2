@@ -4,13 +4,19 @@ shopt -s nullglob
 IFS=$'\n\t'
 
 [[ $# -gt 0 ]] || {
-    echo "usage: [bootstrap2_hostname=<hostname>] $0 components/<component> [...]" 
+    echo "usage: [bootstrap2_hostname=<hostname>] $0 [--no-defaults] components/<component> [...]"
     exit 1
 }
 
 mmdebstrap_args=(--mode=unshare)
 
-components=(components/0?-* "$@" components/9?-*)
+if [[ "$1" == "--no-defaults" ]]
+then
+    shift
+    components=("$@")
+else
+    components=(components/0?-* "$@" components/9?-*)
+fi
 
 for component in "${components[@]}"
 do
