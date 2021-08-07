@@ -30,9 +30,9 @@ done
 mmdebstrap_args+=(bullseye -)
 [[ "${mirror:-}" ]] && mmdebstrap_args+=("$mirror")
 
-# needs to be in the environment for copy-out of /boot
-export bootstrap2_target_dir="out-$(date +%Y%m%d-%H%M%S)"
+bootstrap2_target_dir="/tmp/bootstrap2-out-$(date +%Y%m%d-%H%M%S)"
 mkdir "$bootstrap2_target_dir"
+mkdir "$bootstrap2_target_dir/live"
 
 {
     echo   "II: running mmdebstrap"
@@ -43,4 +43,5 @@ mkdir "$bootstrap2_target_dir"
 } | tee "${bootstrap2_target_dir}/run.txt"
 
 mmdebstrap "${mmdebstrap_args[@]}" \
-| tar2sqfs --compressor zstd --comp-extra level=1 --block-size 1M "${bootstrap2_target_dir}/filesystem.squashfs"
+| tar2sqfs --compressor zstd --comp-extra level=1 --block-size 1M "${bootstrap2_target_dir}/live/filesystem.squashfs"
+rdsquashfs -u boot -p "${bootstrap2_target_dir}/boot" "${bootstrap2_target_dir}/live/filesystem.squashfs"
